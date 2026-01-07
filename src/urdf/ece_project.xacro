@@ -1,26 +1,14 @@
 <?xml version="1.0" ?>
 <robot name="ece_project" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-<!-- Declare the argument that will be passed from the launch file -->
 <xacro:arg name="controller_config_path" default=""/>
 
-<!-- 
-  ==============================================
-  === IN-LINED FROM materials.xacro ===
-  ==============================================
--->
 <material name="silver">
   <color rgba="0.700 0.700 0.700 1.000"/>
 </material>
 
-<!-- 
-  ==============================================
-  === IN-LINED FROM ece_project.gazebo ===
-  ==============================================
--->
 <xacro:property name="body_color" value="Gazebo/Silver" />
 
-<!-- Material/Physics properties for Gazebo -->
 <gazebo reference="base_link">
   <material>${body_color}</material>
   <mu1>0.2</mu1>
@@ -63,18 +51,7 @@
   <mu2>0.2</mu2>
   <self_collide>true</self_collide>
 </gazebo>
-<!-- 
-  NOTE: The old <plugin name="control" ...> from ece_project.gazebo 
-  has been REMOVED as it is replaced by the new plugin below.
--->
 
-<!-- 
-  ======================================================
-  === 1. ADDED: GAZEBO IGNITION (GZ) ROS2_CONTROL PLUGIN ===
-  ======================================================
-  This loads the ros2_control system into Gazebo and
-  passes it the path to your controller.yaml file.
--->
 <gazebo>
     <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin"
             filename="libgz_ros2_control-system.so">
@@ -82,19 +59,9 @@
     </plugin>
 </gazebo>
 
-<!-- 
-  ==============================================
-  === 2. ADDED: ROS2_CONTROL HARDWARE INTERFACE ===
-  ==============================================
-  This block defines *which* joints are controlled
-  and *how* (e.g., via "position").
-  
-  This REPLACES the entire 'ece_project.trans' file.
--->
 <ros2_control name="gz_ros2_control" type="system">
     
     <hardware>
-        <!-- This is the plugin for the new Gazebo (Ignition) -->
         <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
 
