@@ -1,0 +1,322 @@
+<?xml version="1.0" ?>
+<robot name="ece_project" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!-- Declare the argument that will be passed from the launch file -->
+<xacro:arg name="controller_config_path" default=""/>
+
+<!-- 
+  ==============================================
+  === IN-LINED FROM materials.xacro ===
+  ==============================================
+-->
+<material name="silver">
+  <color rgba="0.700 0.700 0.700 1.000"/>
+</material>
+
+<!-- 
+  ==============================================
+  === IN-LINED FROM ece_project.gazebo ===
+  ==============================================
+-->
+<xacro:property name="body_color" value="Gazebo/Silver" />
+
+<!-- Material/Physics properties for Gazebo -->
+<gazebo reference="base_link">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+  <gravity>true</gravity>
+</gazebo>
+
+<gazebo reference="part1_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="part2_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="part3_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="Component7_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="arm1_1">
+  <material>${body_color}</material>
+  <mu1>0.2</mu1>
+  <mu2>0.2</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+<!-- 
+  NOTE: The old <plugin name="control" ...> from ece_project.gazebo 
+  has been REMOVED as it is replaced by the new plugin below.
+-->
+
+<!-- 
+  ======================================================
+  === 1. ADDED: GAZEBO IGNITION (GZ) ROS2_CONTROL PLUGIN ===
+  ======================================================
+  This loads the ros2_control system into Gazebo and
+  passes it the path to your controller.yaml file.
+-->
+<gazebo>
+    <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin"
+            filename="libgz_ros2_control-system.so">
+        <parameters>$(arg controller_config_path)</parameters>
+    </plugin>
+</gazebo>
+
+<!-- 
+  ==============================================
+  === 2. ADDED: ROS2_CONTROL HARDWARE INTERFACE ===
+  ==============================================
+  This block defines *which* joints are controlled
+  and *how* (e.g., via "position").
+  
+  This REPLACES the entire 'ece_project.trans' file.
+-->
+<ros2_control name="gz_ros2_control" type="system">
+    
+    <hardware>
+        <!-- This is the plugin for the new Gazebo (Ignition) -->
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <!-- Define each controllable joint -->
+    <joint name="base_link_part1_joint">
+        <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="part1_part2_joint">
+        <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="part2_part3_joint">
+        <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="part3_component_joint">
+        <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="component_arm_joint">
+        <command_interface name="position">
+            <param name="min">-3.14</param>
+            <param name="max">3.14</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+    </joint>
+    
+</ros2_control>
+
+
+
+<link name="world" />
+
+<joint name="world_to_base_link" type="fixed">
+  <parent link="world"/>
+  <child link="base_link"/>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+</joint>
+	
+
+
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.004357787137382906 0.0 0.024809734904587342" rpy="0 0 0"/>
+    <mass value="5.209742367356124"/>
+    <inertia ixx="0.006588" iyy="0.006588" izz="0.011006" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+       <mesh filename="file://$(find ece_project_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="part1_1">
+  <inertial>
+    <origin xyz="-1.9845675052875683e-07 1.2737500378211816e-06 0.037266056560422" rpy="0 0 0"/>
+    <mass value="3.6976708577920414"/>
+    <inertia ixx="0.004276" iyy="0.004363" izz="0.003432" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.004358 -0.0 -0.04981" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/part1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.004358 -0.0 -0.04981" rpy="0 0 0"/>
+    <geometry>
+       <mesh filename="file://$(find ece_project_description)/meshes/part1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="part2_1">
+  <inertial>
+    <origin xyz="-1.6488189339119302e-07 0.046637799610768624 0.07252992652361669" rpy="0 0 0"/>
+    <mass value="3.0798451493370087"/>
+    <inertia ixx="0.013764" iyy="0.013609" izz="0.00115" ixy="-0.0" iyz="-0.000752" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.004358 -0.031 -0.120856" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/part2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.004358 -0.031 -0.120856" rpy="0 0 0"/>
+    <geometry>
+       <mesh filename="file://$(find ece_project_description)/meshes/part2_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="part3_1">
+  <inertial>
+    <origin xyz="0.04369632900488334 0.044718146037920486 -4.12461192422775e-07" rpy="0 0 0"/>
+    <mass value="1.5014073264668482"/>
+    <inertia ixx="0.000513" iyy="0.003407" izz="0.00364" ixy="-0.000347" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.004358 -0.0995 -0.295856" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/part3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.004358 -0.0995 -0.295856" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/part3_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="Component7_1">
+  <inertial>
+    <origin xyz="0.0027893911320693854 -0.02442326417952198 -0.0005100217651111127" rpy="0 0 0"/>
+    <mass value="0.1478012924361456"/>
+    <inertia ixx="2.7e-05" iyy="1.8e-05" izz="3.7e-05" ixy="2e-06" iyz="-0.0" ixz="2e-06"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.119358 -0.131985 -0.295856" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/Component7_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.119358 -0.131985 -0.295856" rpy="0 0 0"/>
+     <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/Component7_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="arm1_1">
+  <inertial>
+    <origin xyz="0.017680872153771843 -0.003393088338515482 -0.0040560330959668045" rpy="0 0 0"/>
+    <mass value="0.008353437860327684"/>
+    <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="-0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.152624 -0.09 -0.296733" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/arm1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.152624 -0.09 -0.296733" rpy="0 0 0"/>
+     <geometry>
+      <mesh filename="file://$(find ece_project_description)/meshes/arm1_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="base_link_part1_joint" type="continuous">
+  <origin xyz="0.004358 0.0 0.04981" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="part1_1"/>
+  <axis xyz="0.0 0.0 1.0"/>
+</joint>
+
+<joint name="part1_part2_joint" type="continuous">
+  <origin xyz="0.0 0.031 0.071046" rpy="0 0 0"/>
+  <parent link="part1_1"/>
+  <child link="part2_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+</joint>
+
+<joint name="part2_part3_joint" type="continuous">
+  <origin xyz="0.0 0.0685 0.175" rpy="0 0 0"/>
+  <parent link="part2_1"/>
+  <child link="part3_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+</joint>
+
+<joint name="part3_component_joint" type="continuous">
+  <origin xyz="0.115 0.032485 0.0" rpy="0 0 0"/>
+  <parent link="part3_1"/>
+  <child link="Component7_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+</joint>
+
+<joint name="component_arm_joint" type="continuous">
+  <origin xyz="0.033266 -0.041985 0.000877" rpy="0 0 0"/>
+  <parent link="Component7_1"/>
+  <child link="arm1_1"/>
+  <axis xyz="0.087156 0.0 0.996195"/>
+</joint>
+
+</robot>
